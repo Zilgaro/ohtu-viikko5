@@ -1,80 +1,92 @@
 package ohtu;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class TennisGame {
-    
-    private int m_score1 = 0;
-    private int m_score2 = 0;
+
+    private int player1Score = 0;
+    private int player2Score = 0;
+    private final int MAX = 4;
     private String player1Name;
     private String player2Name;
+    private Map<Integer, String> scores;
 
     public TennisGame(String player1Name, String player2Name) {
         this.player1Name = player1Name;
         this.player2Name = player2Name;
+        scores = new HashMap<>();
+        scores.put(0, "Love");
+        scores.put(1, "Fifteen");
+        scores.put(2, "Thirty");
+        scores.put(3, "Forty");
     }
 
     public void wonPoint(String playerName) {
-        if (playerName == "player1")
-            m_score1 += 1;
-        else
-            m_score2 += 1;
+        if (playerName.equals(this.player1Name)) {
+            player1Score++;
+        } else {
+            player2Score++;
+        }
     }
 
     public String getScore() {
         String score = "";
-        int tempScore=0;
-        if (m_score1==m_score2)
-        {
-            switch (m_score1)
-            {
-                case 0:
-                        score = "Love-All";
-                    break;
-                case 1:
-                        score = "Fifteen-All";
-                    break;
-                case 2:
-                        score = "Thirty-All";
-                    break;
-                case 3:
-                        score = "Forty-All";
-                    break;
-                default:
-                        score = "Deuce";
-                    break;
-                
-            }
-        }
-        else if (m_score1>=4 || m_score2>=4)
-        {
-            int minusResult = m_score1-m_score2;
-            if (minusResult==1) score ="Advantage player1";
-            else if (minusResult ==-1) score ="Advantage player2";
-            else if (minusResult>=2) score = "Win for player1";
-            else score ="Win for player2";
-        }
-        else
-        {
-            for (int i=1; i<3; i++)
-            {
-                if (i==1) tempScore = m_score1;
-                else { score+="-"; tempScore = m_score2;}
-                switch(tempScore)
-                {
-                    case 0:
-                        score+="Love";
-                        break;
-                    case 1:
-                        score+="Fifteen";
-                        break;
-                    case 2:
-                        score+="Thirty";
-                        break;
-                    case 3:
-                        score+="Forty";
-                        break;
-                }
-            }
+        int tempScore = 0;
+        if (player1Score == player2Score) {
+            score = evenScore();
+        } else if (player1Score >= MAX || player2Score >= MAX) {
+            score = getAdvantageOrVictory();
+        } else {
+            score = otherCases();
         }
         return score;
+    }
+
+    private String evenScore() {
+        if (0 <= player1Score && player1Score < MAX) {
+            return scores.get(player1Score) + "-All";
+        } else {
+            return "Deuce";
+        }
+    }
+
+    private String getAdvantageOrVictory() {
+        int minusResult = player1Score - player2Score;
+        if (minusResult == 1) {
+            return "Advantage " + player1Name;
+        } else if (minusResult == -1) {
+            return "Advantage " + player2Name;
+        } else if (minusResult >= 2) {
+            return "Win for " + player1Name;
+        } else {
+            return "Win for " + player2Name;
+        }
+    }
+
+    private String otherCases() {
+        int tempScore = 0;
+        String returnValue = "";
+        for (int i = 1; i < MAX - 1; i++) {
+            tempScore = setTempScore(i, tempScore);
+            if (i != 1) {
+                returnValue += "-";
+            }
+            returnValue += setScore(tempScore);
+        }
+        return returnValue;
+    }
+
+    private int setTempScore(int index, int tempScore) {
+        if (index == 1) {
+            tempScore = player1Score;
+        } else {
+            tempScore = player2Score;
+        }
+        return tempScore;
+    }
+
+    private String setScore(int tempScore) {
+        return scores.get(tempScore);
     }
 }
