@@ -23,7 +23,7 @@ public class KauppaTest {
         kauppa.maksa("1111");
 
         // varmistetaan pankilta että sen metodia maksa on kutsuttu
-        verify(mockPankki).maksa(anyString(), anyInt(), anyInt());
+        verify(mockPankki).maksa(anyString(), eq(11), anyInt());
         // kutsussa olevein parametrien arvoilla ei testissä ole väliä
         // kokeile muuttaa koodia siten että testi menee rikki!        
     }
